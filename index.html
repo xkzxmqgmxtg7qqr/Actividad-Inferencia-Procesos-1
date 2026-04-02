@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Guía Interactiva - Inferencia y Procesos Estocásticos</title>
+
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)'], ['$', '$']],
+    displayMath: [['\\[','\\]'], ['$$','$$']]
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+<style>
+  :root{
+    --utem-azul:#004B8D;
+    --utem-cian:#00A5CF;
+    --utem-gris:#475569;
+    --utem-fondo:#f4f7fb;
+    --utem-blanco:#ffffff;
+    --utem-verde:#008c78;
+    --utem-naranja:#e67814;
+    --utem-rojo:#b42828;
+    --borde:#d9e2ec;
+    --sombra:0 10px 24px rgba(15,23,42,.08);
+  }
+
+  *{box-sizing:border-box}
+
+  body{
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    background:var(--utem-fondo);
+    color:#1f2937;
+    line-height:1.6;
+  }
+
+  .container{
+    max-width:1180px;
+    margin:0 auto;
+    padding:24px;
+  }
+
+  .hero{
+    background:linear-gradient(135deg,var(--utem-azul),var(--utem-cian));
+    color:white;
+    border-radius:20px;
+    padding:30px 28px;
+    box-shadow:var(--sombra);
+    margin-bottom:22px;
+  }
+
+  .hero h1{
+    margin:0 0 8px 0;
+    font-size:2rem;
+  }
+
+  .hero p{
+    margin:0;
+    font-size:1.03rem;
+    max-width:900px;
+  }
+
+  .card{
+    background:var(--utem-blanco);
+    border:1px solid var(--borde);
+    border-radius:18px;
+    box-shadow:var(--sombra);
+    padding:22px;
+    margin-bottom:18px;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+  }
+
+  @media (max-width: 900px){
+    .grid{grid-template-columns:1fr}
+  }
+
+  h2,h3{
+    color:var(--utem-azul);
+    margin-top:0;
+  }
+
+  .badge{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:999px;
+    font-size:.84rem;
+    font-weight:700;
+    color:white;
+    margin-bottom:10px;
+  }
+
+  .baja{background:var(--utem-verde)}
+  .media{background:var(--utem-naranja)}
+  .alta{background:var(--utem-rojo)}
+
+  .meta{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0,1fr));
+    gap:12px;
+    margin-top:14px;
+  }
+
+  .meta div{
+    background:#f8fafc;
+    border:1px solid var(--borde);
+    padding:10px 12px;
+    border-radius:12px;
+  }
+
+  ul,ol{
+    padding-left:22px;
+  }
+
+  .btn-row{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:12px;
+  }
+
+  button{
+    border:none;
+    border-radius:10px;
+    padding:11px 15px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.2s ease;
+  }
+
+  .btn-primary{
+    background:var(--utem-azul);
+    color:white;
+  }
+
+  .btn-secondary{
+    background:#e2e8f0;
+    color:#1e293b;
+  }
+
+  .btn-primary:hover,.btn-secondary:hover{
+    transform:translateY(-1px);
+    opacity:.95;
+  }
+
+  .hint, .feedback{
+    display:none;
+    margin-top:14px;
+    padding:14px 16px;
+    border-radius:12px;
+    border-left:5px solid var(--utem-cian);
+    background:#eff8ff;
+  }
+
+  textarea{
+    width:100%;
+    min-height:120px;
+    margin-top:14px;
+    padding:14px;
+    border:1px solid #cbd5e1;
+    border-radius:12px;
+    resize:vertical;
+    font-family:inherit;
+    font-size:.98rem;
+  }
+
+  .rubrica table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:.95rem;
+  }
+
+  .rubrica th, .rubrica td{
+    border:1px solid #cbd5e1;
+    padding:10px;
+    vertical-align:top;
+  }
+
+  .rubrica th{
+    background:#eaf2fb;
+    color:#0f172a;
+  }
+
+  .footer{
+    text-align:center;
+    color:#64748b;
+    font-size:.92rem;
+    padding:16px 8px 30px;
+  }
+
+  .small{
+    font-size:.93rem;
+    color:#475569;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <section class="hero">
+      <h1>Guía interactiva de trabajo</h1>
+      <p><strong>Inferencia y Procesos Estocásticos</strong> · Ingeniería Informática / Ingeniería en Computación.<br>
+      Recurso diseñado para identificar el tipo de problema estadístico, justificar el enfoque inferencial y tomar decisiones en contextos realistas del ámbito computacional.</p>
+    </section>
+
+    <section class="card">
+      <h2>Propósito de la guía</h2>
+      <p>
+        Esta guía busca que distingas, en situaciones verosímiles del ámbito de la informática y la computación,
+        si el problema se relaciona con una <strong>observación individual</strong>, una <strong>media</strong>,
+        una <strong>varianza</strong> o una <strong>comparación entre varianzas</strong>.
+      </p>
+      <div class="meta">
+        <div><strong>Qué se espera de ti</strong><br>Interpretar, justificar y decidir con criterio, no solo calcular.</div>
+        <div><strong>Cómo usarla</strong><br>Lee el caso, responde, revisa la orientación y mejora tu argumento.</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Instrucciones generales</h2>
+      <ol>
+        <li>Identifica con claridad qué cantidad o parámetro interesa estudiar.</li>
+        <li>Determina si se estudia una observación individual, una media, una varianza o una comparación entre varianzas.</li>
+        <li>Justifica qué enfoque inferencial sería conceptualmente adecuado.</li>
+        <li>Interpreta el contexto desde una perspectiva propia de la ingeniería informática/computación.</li>
+        <li>Evita responder solo con una fórmula: explica el sentido de tu decisión.</li>
+      </ol>
+      <p class="small">Sugerencia: redacta primero una clasificación conceptual del problema y después una posible vía de análisis estadístico.</p>
+    </section>
+
+    <section class="grid">
+
+      <article class="card">
+        <span class="badge baja">Dificultad: baja</span>
+        <h3>Situación 1 · Monitoreo de latencia en un microservicio</h3>
+        <p>
+          Una plataforma institucional monitorea el tiempo de respuesta de un <strong>microservicio de autenticación</strong>.
+          En condiciones normales, el tiempo de respuesta se modela aproximadamente por una distribución normal con
+          media \(110\) milisegundos y desviación estándar \(12\) milisegundos.
+        </p>
+        <p>
+          Durante una jornada de monitoreo, una solicitud registra un tiempo de respuesta de <strong>134 ms</strong>.
+          El equipo desea decidir si este valor puede considerarse esperable o si constituye una observación inusualmente alta.
+        </p>
+        <ol>
+          <li>¿Qué tipo de problema estadístico se plantea?</li>
+          <li>¿Se estudia una media, una varianza o una observación individual?</li>
+          <li>¿Corresponde realizar una estandarización? Justifica.</li>
+          <li>¿Qué interpretación técnica tendría un valor muy alejado de lo esperado?</li>
+        </ol>
+        <div class="btn-row">
+          <button class="btn-primary" onclick="toggleBlock('hint1')">Ver orientación</button>
+          <button class="btn-secondary" onclick="guardarRespuesta('resp1')">Guardar respuesta</button>
+        </div>
+        <div id="hint1" class="hint">
+          <strong>Pista:</strong> el foco está en comparar una <em>observación individual</em> con un comportamiento conocido del sistema.
+        </div>
+        <textarea id="resp1" placeholder="Escribe aquí tu respuesta..."></textarea>
+      </article>
+
+      <article class="card">
+        <span class="badge media">Dificultad: baja-media</span>
+        <h3>Situación 2 · Tiempo medio de respuesta de una API interna</h3>
+        <p>
+          Un equipo de desarrollo implementó una nueva versión de una <strong>API interna de consulta de inventario</strong>.
+          Como aún no existe historial suficiente, se realiza una prueba piloto y se registran tiempos de respuesta
+          en <strong>10 ejecuciones independientes</strong>.
+        </p>
+        <p>
+          El objetivo es estimar el <strong>tiempo medio de respuesta real</strong> de la nueva versión, pero la desviación estándar poblacional no se conoce.
+        </p>
+        <ol>
+          <li>¿Cuál es el parámetro de interés?</li>
+          <li>¿Por qué no sería adecuado asumir automáticamente una distribución normal estándar?</li>
+          <li>¿Qué papel juegan el tamaño muestral y la variabilidad desconocida?</li>
+          <li>¿Qué enfoque inferencial parece más adecuado?</li>
+        </ol>
+        <div class="btn-row">
+          <button class="btn-primary" onclick="toggleBlock('hint2')">Ver orientación</button>
+          <button class="btn-secondary" onclick="guardarRespuesta('resp2')">Guardar respuesta</button>
+        </div>
+        <div id="hint2" class="hint">
+          <strong>Pista:</strong> el interés está en una <em>media poblacional</em> estimada desde una muestra pequeña con variabilidad desconocida.
+        </div>
+        <textarea id="resp2" placeholder="Escribe aquí tu respuesta..."></textarea>
+      </article>
+
+      <article class="card">
+        <span class="badge media">Dificultad: media</span>
+        <h3>Situación 3 · Estabilidad del proceso de respaldo automático</h3>
+        <p>
+          En un centro de datos, el proceso nocturno de <strong>respaldo automático de bases de datos</strong> debe ejecutarse con variabilidad acotada.
+          Tras una actualización del sistema operativo, el equipo sospecha que los tiempos de ejecución se han vuelto más inestables.
+        </p>
+        <p>
+          Se registra una muestra de tiempos recientes y se desea evaluar si la <strong>variabilidad del proceso</strong>
+          sigue siendo compatible con el estándar técnico establecido.
+        </p>
+        <ol>
+          <li>¿La pregunta principal se centra en el promedio o en la dispersión?</li>
+          <li>¿Qué parámetro poblacional parece ser el foco?</li>
+          <li>¿Por qué la estabilidad operativa se asocia con la varianza?</li>
+          <li>¿Qué consecuencias tendría un aumento de la variabilidad?</li>
+        </ol>
+        <div class="btn-row">
+          <button class="btn-primary" onclick="toggleBlock('hint3')">Ver orientación</button>
+          <button class="btn-secondary" onclick="guardarRespuesta('resp3')">Guardar respuesta</button>
+        </div>
+        <div id="hint3" class="hint">
+          <strong>Pista:</strong> aquí no interesa tanto el valor medio, sino cuán estable o inestable es el proceso.
+        </div>
+        <textarea id="resp3" placeholder="Escribe aquí tu respuesta..."></textarea>
+      </article>
+
+      <article class="card">
+        <span class="badge alta">Dificultad: media-alta</span>
+        <h3>Situación 4 · Comparación de algoritmos en un clúster</h3>
+        <p>
+          Un laboratorio de computación de alto rendimiento evalúa dos algoritmos de <strong>planificación de tareas</strong>.
+          Ambos muestran tiempos promedio similares, pero uno podría ser mucho más inestable cuando existe congestión o concurrencia elevada.
+        </p>
+        <p>
+          Se recopilan muestras independientes de tiempos de ejecución. El interés no es decidir cuál es más rápido en promedio,
+          sino cuál presenta <strong>menor variabilidad</strong>.
+        </p>
+        <ol>
+          <li>¿Qué tipo de comparación estadística se plantea?</li>
+          <li>¿Por qué no basta comparar solo promedios?</li>
+          <li>¿Qué significa, en términos de ingeniería, una mayor dispersión?</li>
+          <li>¿Qué condiciones deberían cumplirse para que la comparación sea razonable?</li>
+        </ol>
+        <div class="btn-row">
+          <button class="btn-primary" onclick="toggleBlock('hint4')">Ver orientación</button>
+          <button class="btn-secondary" onclick="guardarRespuesta('resp4')">Guardar respuesta</button>
+        </div>
+        <div id="hint4" class="hint">
+          <strong>Pista:</strong> el problema apunta a comparar la <em>estabilidad</em> de dos procesos, no solo su rapidez promedio.
+        </div>
+        <textarea id="resp4" placeholder="Escribe aquí tu respuesta..."></textarea>
+      </article>
+
+      <article class="card" style="grid-column:1/-1;">
+        <span class="badge alta">Dificultad: alta</span>
+        <h3>Situación 5 · Validación de rendimiento tras migración a contenedores</h3>
+        <p>
+          Una empresa tecnológica migró parte de su infraestructura desde máquinas virtuales tradicionales hacia una arquitectura basada en
+          <strong>contenedores orquestados</strong>. Tras la migración, el equipo de observabilidad detecta varios fenómenos simultáneos:
+        </p>
+        <ul>
+          <li>algunas solicitudes individuales presentan latencias inusualmente altas;</li>
+          <li>se necesita estimar el nuevo tiempo medio de respuesta del servicio con una muestra inicial pequeña;</li>
+          <li>existe preocupación por un posible aumento en la variabilidad respecto de la situación previa;</li>
+          <li>se desea comparar la estabilidad del servicio entre dos configuraciones distintas de balanceo de carga.</li>
+        </ul>
+        <ol>
+          <li>Identifica las cuatro preguntas estadísticas presentes en el caso.</li>
+          <li>Explica por qué no sería correcto resolver todo con una única distribución o procedimiento.</li>
+          <li>Asocia cada subproblema con el tipo de cantidad a estudiar.</li>
+          <li>Redacta una síntesis técnica sobre por qué no basta con recolectar datos.</li>
+        </ol>
+        <div class="btn-row">
+          <button class="btn-primary" onclick="toggleBlock('hint5')">Ver orientación</button>
+          <button class="btn-secondary" onclick="guardarRespuesta('resp5')">Guardar respuesta</button>
+        </div>
+        <div id="hint5" class="hint">
+          <strong>Pista:</strong> este caso integra observación individual, media, varianza y comparación de varianzas.
+        </div>
+        <textarea id="resp5" placeholder="Escribe aquí tu respuesta..."></textarea>
+      </article>
+    </section>
+
+    <section class="card rubrica">
+      <h2>Rúbrica analítica breve</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Criterio</th>
+            <th>Logrado</th>
+            <th>En desarrollo</th>
+            <th>Inicial</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Identificación del problema</td>
+            <td>Clasifica correctamente el tipo de problema estadístico.</td>
+            <td>Clasifica con una imprecisión menor.</td>
+            <td>No identifica correctamente el foco del problema.</td>
+          </tr>
+          <tr>
+            <td>Justificación del enfoque</td>
+            <td>Argumenta con claridad qué herramienta inferencial es adecuada.</td>
+            <td>Justifica parcialmente.</td>
+            <td>No justifica o lo hace incorrectamente.</td>
+          </tr>
+          <tr>
+            <td>Interpretación en contexto</td>
+            <td>Relaciona la decisión estadística con el contexto computacional.</td>
+            <td>La relación es general o incompleta.</td>
+            <td>No conecta con el contexto profesional.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>Acciones rápidas</h2>
+      <div class="btn-row">
+        <button class="btn-primary" onclick="mostrarResumen()">Mostrar recomendaciones finales</button>
+        <button class="btn-secondary" onclick="limpiarTodo()">Borrar todas las respuestas</button>
+      </div>
+      <div id="resumenFinal" class="feedback">
+        <strong>Recomendación final:</strong> antes de calcular, identifica si el problema trata una observación particular,
+        un promedio, una variabilidad o una comparación de estabilidad. En ingeniería informática, una mala decisión conceptual
+        puede llevar a conclusiones técnicas erróneas aunque los cálculos estén bien ejecutados.
+      </div>
+    </section>
+
+    <div class="footer">
+      Recurso HTML + LaTeX + JavaScript listo para uso externo o adaptación a entornos virtuales de aprendizaje.
+    </div>
+  </div>
+
+<script>
+  function toggleBlock(id){
+    const el = document.getElementById(id);
+    el.style.display = (el.style.display === 'block') ? 'none' : 'block';
+  }
+
+  function guardarRespuesta(id){
+    const area = document.getElementById(id);
+    localStorage.setItem(id, area.value);
+    alert('Respuesta guardada localmente en este navegador.');
+  }
+
+  function cargarRespuestas(){
+    ['resp1','resp2','resp3','resp4','resp5'].forEach(id => {
+      const saved = localStorage.getItem(id);
+      if(saved !== null){
+        document.getElementById(id).value = saved;
+      }
+    });
+  }
+
+  function limpiarTodo(){
+    ['resp1','resp2','resp3','resp4','resp5'].forEach(id => {
+      localStorage.removeItem(id);
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('resumenFinal').style.display = 'none';
+    alert('Se borraron las respuestas guardadas.');
+  }
+
+  function mostrarResumen(){
+    document.getElementById('resumenFinal').style.display = 'block';
+  }
+
+  window.onload = cargarRespuestas;
+</script>
+</body>
+</html>
